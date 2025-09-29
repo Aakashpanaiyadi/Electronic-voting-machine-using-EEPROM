@@ -25,3 +25,7 @@ MPLAB IDE / XC8 Compiler → For code development.
 Proteus → For circuit simulation.
 
 PIC Microcontroller → Handles voting logic, EEPROM storage, and LCD display.
+
+
+<img width="1278" height="864" alt="image" src="https://github.com/user-attachments/assets/9ac372bc-a30f-443f-af0c-c06b0f1813ba" />
+
