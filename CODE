@@ -1,0 +1,258 @@
+#include<pic.h>
+#define RS RC0
+#define RW RC1
+#define EN RC2
+char byte;
+void delay()
+{
+T0CS=0;
+T0SE=0;
+PSA=0;
+PS2=1;
+PS1=1;
+PS0=1;
+TMR0=252;
+while(TMR0IF==0);
+TMR0IF=0;
+TMR0=0;
+}
+void delay1(unsigned int x)
+{
+for(int i=0;i<x;i++)
+{
+delay();
+}
+}
+void lcd_command(unsigned char con)
+{
+PORTB=con;
+RS=0;
+RW=0;
+EN=1;
+delay(1);
+EN=0;
+}
+void lcd_data(unsigned char data)
+{
+PORTB=data;
+RS=1;
+RW=0;
+EN=1;
+delay(1);
+EN=0;
+}
+void lcd_init()
+{
+lcd_command(0x38);
+lcd_command(0x06);
+lcd_command(0x0c);
+lcd_command(0x01);
+}
+void lcd_display(unsigned char m[])
+{
+int i;
+for(i=0;m[i]!=0;i++)
+{
+lcd_data(m[i]);
+}
+}
+void write(unsigned int data,unsigned char addr)
+{
+EEADR=addr;
+EEDATA=data;
+EEPGD=0;
+WREN=1;
+EECON2=0X55;
+EECON2=0XAA;
+WR=1;
+while(EEIF==0);
+EEIF=0;
+}
+void read(unsigned int addr)
+{
+EEADR=addr;
+EEPGD=0;
+RD=1;
+byte=EEDATA;
+}
+void main()
+{
+int arr[3];
+int a=0,b=0,c=0,d=0,e=0;
+PORTB=0X00;
+TRISB=0X00;
+PORTC=0X00;
+TRISC=0X08;
+PORTD=0X00;
+TRISD=0X0F;
+//a=0;b=0;c=0;d=0;
+//write(a,0xc0); write(b,0xc1); write(c,0xc2); write(d,0xc3);
+lcd_init();
+while(1)
+{
+//a=0;b=0;c=0;d=0;
+//write(a,0xc0); write(b,0xc1); write(c,0xc2); write(d,0xc3);
+if(RC3==0)
+{
+lcd_command(0x80);
+lcd_display("VOTING MACHINE");
+lcd_command(0xC0);
+	if(RD0==1)
+	{
+    lcd_command(0x01);
+	lcd_command(0x80);
+	lcd_display("Wait for mins");
+	RD4=1;
+    a=a+1;
+    write(a,0xc0);	
+    delay1(500);
+	lcd_command(0xC0);
+	//lcd_data(a+0x30);
+	lcd_display("voted");
+ 	delay1(400);
+	}
+	if(RD0==0)
+	{
+	RD4=0;
+	}
+	
+	if(RD1==1)
+	{
+	RD5=1;
+	lcd_command(0x01);
+	lcd_command(0x80);
+	lcd_display("Wait for mins");
+	b=b+1;
+	write(b,0xc1);
+    delay1(500);
+	lcd_command(0xC0);
+	//lcd_data(b+0x30);
+	lcd_display("voted");
+	delay1(400);
+	lcd_command(0x01);
+	}
+	if(RD1==0)
+	{
+	RD5=0;
+	//lcd_display("NOT VOTED");
+	}
+	
+	
+	if(RD2==1)
+	{
+	RD6=1;
+	lcd_command(0x01);
+	lcd_command(0x80);
+	lcd_display("Wait for mins");
+	c=c+1;
+	write(c,0xc2);
+	delay1(500);
+	lcd_command(0xC0);
+	//lcd_data(c+0x30);
+	lcd_display("voted");
+	delay1(400);
+	lcd_command(0x01);
+	}
+	if(RD2==0)
+	{
+	RD6=0;
+	//lcd_display("NOT VOTED");
+	}
+
+	if(RD3==1)
+	{
+	RD7=1;
+	lcd_command(0x01);
+	lcd_command(0x80);
+	lcd_display("Wait for mins");
+	d=d+1;
+	write(d,0xc3);
+	delay1(500);
+	lcd_command(0xC0);
+	//lcd_data(d+0x30);
+	lcd_display("voted");
+	delay1(400);
+	lcd_command(0x01);
+	}
+	if(RD3==0)
+	{
+	RD7=0;
+	//lcd_display("NOT VOTED");
+	}
+
+}
+
+
+
+if(RC3==1)
+{
+lcd_command(0x01);
+lcd_command(0x80);
+lcd_display("RESULT RELEASED");
+read(0xc0);
+arr[0]=byte;
+lcd_command(0xc0);
+lcd_display("VK VOTES ");
+lcd_data(byte+0x30);
+delay1(1500);
+read(0xc1);
+arr[1]=byte;
+lcd_command(0xc0);
+lcd_display("AK VOTES  ");
+lcd_data(byte+0x30);
+delay1(1500);
+read(0xc2);
+arr[2]=byte;
+lcd_command(0xc0);
+lcd_display("SK VOTES  ");
+lcd_data(byte+0x30);
+delay1(1500);
+read(0xc3);
+arr[3]=byte;
+lcd_command(0xc0);
+lcd_display("VKY VOTES   ");
+lcd_data(byte+0x30);
+delay1(1500);
+lcd_command(0x01);
+int min=arr[0];
+for(int i=0;i<3;i++)
+{
+if(arr[i]>min)
+{
+min=arr[i];
+e=i;
+}
+for(int i=0;i<3;i++)
+{
+if(min == arr[i])
+{
+e=i;
+}
+}
+
+}
+if(e==0)
+{
+lcd_display("winner VK");
+}
+
+if(e==1)
+{
+lcd_display("winner AK");
+}
+
+if(e==2)
+{
+lcd_display("winner SK");
+}
+
+if(e==3)
+{
+lcd_display("winner VKY");
+}
+
+delay1(1500);
+
+}
+}
+}
