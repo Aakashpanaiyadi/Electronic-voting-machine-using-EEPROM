@@ -85,13 +85,9 @@ PORTC=0X00;
 TRISC=0X08;
 PORTD=0X00;
 TRISD=0X0F;
-//a=0;b=0;c=0;d=0;
-//write(a,0xc0); write(b,0xc1); write(c,0xc2); write(d,0xc3);
 lcd_init();
 while(1)
 {
-//a=0;b=0;c=0;d=0;
-//write(a,0xc0); write(b,0xc1); write(c,0xc2); write(d,0xc3);
 if(RC3==0)
 {
 lcd_command(0x80);
@@ -181,9 +177,6 @@ lcd_command(0xC0);
 	}
 
 }
-
-
-
 if(RC3==1)
 {
 lcd_command(0x01);
