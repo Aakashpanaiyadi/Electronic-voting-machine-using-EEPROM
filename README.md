@@ -1,4 +1,4 @@
-# Electronic-voting-machine-using-EEPROM
+# Electronic Voting Machine using PIC Microcontroller, EEPROM & LCD
 This project is an Electronic Voting Machine (EVM) built with a PIC microcontroller and LCD display. It allows multiple candidates to be voted for and displays the results after voting.
 
  Features
