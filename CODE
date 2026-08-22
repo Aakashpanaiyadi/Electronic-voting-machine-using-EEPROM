@@ -46,7 +46,7 @@ void lcd_command(unsigned char con)
     RW=0;
     EN=1;
 
-    delay(1);
+    delay1(1);
 
     EN=0;
 }
@@ -60,7 +60,7 @@ void lcd_data(unsigned char data)
     RW=0;
     EN=1;
 
-    delay(1);
+    delay1(1);
 
     EN=0;
 }
